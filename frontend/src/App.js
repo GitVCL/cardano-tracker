@@ -5,12 +5,13 @@ function App() {
   const [cardanoData, setCardanoData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [nextUpdate, setNextUpdate] = useState(60); // segundos até próxima atualização
+  const [nextUpdate, setNextUpdate] = useState(300); // 5 minutos
 
   const fetchData = () => {
     setLoading(true);
     setError(null);
-fetch("https://cardano-back.onrender.com/api/cardano")
+
+    fetch("https://cardano-back.onrender.com/api/cardano")
       .then(response => {
         if (!response.ok) throw new Error('Erro na resposta da API');
         return response.json();
@@ -18,7 +19,7 @@ fetch("https://cardano-back.onrender.com/api/cardano")
       .then(data => {
         setCardanoData(data);
         setLoading(false);
-        setNextUpdate(60); // reinicia o contador
+        setNextUpdate(300); // reinicia o contador
       })
       .catch(err => {
         setError(err.message);
@@ -28,7 +29,7 @@ fetch("https://cardano-back.onrender.com/api/cardano")
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 60000); // atualiza a cada 60 segundos
+    const interval = setInterval(fetchData, 300000); // atualiza a cada 5 minutos
     return () => clearInterval(interval);
   }, []);
 
@@ -56,10 +57,6 @@ fetch("https://cardano-back.onrender.com/api/cardano")
         </span>
       </p>
       <p><strong>Market Cap:</strong> ${(cardanoData.marketCap / 1e9).toFixed(2)} B</p>
-
-      <button className="button" onClick={fetchData} disabled={loading}>
-        {loading ? 'Atualizando...' : 'Atualizar dados'}
-      </button>
 
       <p className="next-update">Próxima atualização em: {nextUpdate}s</p>
     </div>
