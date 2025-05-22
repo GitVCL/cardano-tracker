@@ -10,8 +10,7 @@ function App() {
   const fetchData = () => {
     setLoading(true);
     setError(null);
-
-    fetch("https://cardano-back.onrender.com/")
+fetch("https://cardano-back.onrender.com/api/cardano")
       .then(response => {
         if (!response.ok) throw new Error('Erro na resposta da API');
         return response.json();
