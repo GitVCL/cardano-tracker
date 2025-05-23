@@ -36,6 +36,18 @@ body {
   transition: background 0.3s ease;
 }
 
+.btc-container {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #30363d;
+}
+
+.btc-title {
+  color: #f2a900;
+  margin-bottom: 0.5rem;
+}
+
+
 .button:disabled {
   background-color: #3a3f44;
   cursor: not-allowed;
