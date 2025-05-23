@@ -6,44 +6,36 @@ function App() {
   const [btcData, setBtcData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [nextUpdate, setNextUpdate] = useState(300); // 5 minutos
+  const [nextUpdate, setNextUpdate] = useState(300);
 
   const fetchData = () => {
     setLoading(true);
     setError(null);
 
-    // Cardano
     fetch("https://cardano-back.onrender.com/api/cardano")
-      .then(res => {
-        if (!res.ok) throw new Error("Erro na resposta da API da Cardano");
-        return res.json();
-      })
+      .then(res => res.ok ? res.json() : Promise.reject("Erro API Cardano"))
       .then(data => {
         setCardanoData(data);
         setNextUpdate(300);
       })
       .catch(err => {
-        console.error("Cardano:", err.message);
+        console.error("Cardano:", err);
         setError(prev => prev ? prev + " | Cardano" : "Erro ao atualizar Cardano (mantendo dados)");
       })
       .finally(() => setLoading(false));
 
-    // Bitcoin
     fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
-      .then(res => {
-        if (!res.ok) throw new Error("Erro na API da Binance");
-        return res.json();
-      })
+      .then(res => res.ok ? res.json() : Promise.reject("Erro API Binance"))
       .then(data => setBtcData(data))
       .catch(err => {
-        console.error("BTC:", err.message);
+        console.error("BTC:", err);
         setError(prev => prev ? prev + " | BTC" : "Erro ao atualizar BTC (mantendo dados)");
       });
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 300000); // 5 minutos
+    const interval = setInterval(fetchData, 300000);
     return () => clearInterval(interval);
   }, []);
 
@@ -55,38 +47,54 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
-      <h1 className="title">Crypto Tracker</h1>
+    <div className="app">
+      <header className="header">
+        <h1>Cardano Tracker</h1>
+        <span className="next-update">Atualiza em: {nextUpdate}s</span>
+      </header>
 
-      {error && <p className="error">⚠️ {error}</p>}
+      {error && <div className="error">⚠️ {error}</div>}
 
-      {cardanoData && (
-        <div className="card glass">
-          <h2 className="card-title">Cardano (ADA)</h2>
-          <p><strong>Nome:</strong> {cardanoData.name}</p>
-          <p><strong>Preço:</strong> ${cardanoData.price.toFixed(4)}</p>
-          <p>
-            <strong>Variação 24h:</strong>{' '}
-            <span className={cardanoData.change24h >= 0 ? 'positive' : 'negative'}>
-              {cardanoData.change24h >= 0 ? '+' : ''}
+      <div className="table">
+        <div className="table-header">
+          <span>Asset</span>
+          <span>Preço</span>
+          <span>24h</span>
+          <span>Market Cap</span>
+        </div>
+
+        {cardanoData && (
+          <div className="table-row">
+            <div className="coin-info">
+              <img src="https://cryptologos.cc/logos/cardano-ada-logo.png" alt="ADA" className="coin-logo" />
+              <div>
+                <strong>Cardano</strong>
+                <span className="ticker">ADA</span>
+              </div>
+            </div>
+            <span>${cardanoData.price.toFixed(4)}</span>
+            <span className={cardanoData.change24h >= 0 ? 'green' : 'red'}>
               {cardanoData.change24h.toFixed(2)}%
             </span>
-          </p>
-          <p><strong>Market Cap:</strong> ${(cardanoData.marketCap / 1e9).toFixed(2)} B</p>
-        </div>
-      )}
+            <span>${(cardanoData.marketCap / 1e9).toFixed(2)}B</span>
+          </div>
+        )}
 
-      {btcData && (
-        <div className="card glass">
-          <h2 className="card-title">Bitcoin (BTC/USDT)</h2>
-          <p><strong>Preço:</strong> ${parseFloat(btcData.price).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          })}</p>
-        </div>
-      )}
-
-      <p className="next-update">🔄 Próxima atualização em: {nextUpdate}s</p>
+        {btcData && (
+          <div className="table-row">
+            <div className="coin-info">
+              <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" className="coin-logo" />
+              <div>
+                <strong>Bitcoin</strong>
+                <span className="ticker">BTC</span>
+              </div>
+            </div>
+            <span>${parseFloat(btcData.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+            <span>-</span>
+            <span>-</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
