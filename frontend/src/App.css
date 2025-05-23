@@ -1,79 +1,71 @@
+/* App.css */
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0d1117;
-  color: #c9d1d9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  background-color: #0f0f1a;
+  color: #f0f0f0;
 }
 
 .container {
-  background-color: #161b22;
-  padding: 2rem;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #1a1a2e;
   border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 .title {
-  color: #58a6ff;
-  margin-bottom: 1rem;
-}
-
-.button {
-  margin-top: 1.5rem;
-  padding: 10px 20px;
-  background-color: #238636;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btc-container {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid #30363d;
-}
-
-.btc-title {
-  color: #f2a900;
-  margin-bottom: 0.5rem;
-}
-
-
-.button:disabled {
-  background-color: #3a3f44;
-  cursor: not-allowed;
-}
-
-.button:hover:not(:disabled) {
-  background-color: #2ea043;
-}
-
-.positive {
-  color: #3fb950;
-}
-
-.negative {
-  color: #f85149;
-}
-
-.next-update {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #8b949e;
+  text-align: center;
+  color: #00e0ff;
+  margin-bottom: 20px;
+  font-size: 2rem;
 }
 
 .loading,
-.error {
-  font-size: 16px;
-  color: #ffa657;
+.error,
+.next-update {
   text-align: center;
+  font-size: 1.1rem;
+  margin-top: 15px;
+}
+
+.error {
+  color: #ff6b6b;
+  background: #2e0f0f;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.btc-container {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #252545;
+  border-radius: 10px;
+  border-left: 5px solid #f7931a;
+}
+
+.btc-title {
+  color: #f7931a;
+  margin-bottom: 10px;
+}
+
+.positive {
+  color: #00ff99;
+  font-weight: bold;
+}
+
+.negative {
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+strong {
+  color: #ccc;
+}
+
+p {
+  margin: 6px 0;
+  line-height: 1.5;
 }

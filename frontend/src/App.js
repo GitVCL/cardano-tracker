@@ -20,13 +20,13 @@ function App() {
       })
       .then(data => {
         setCardanoData(data);
-        setLoading(false);
         setNextUpdate(300);
       })
       .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+        console.error("Erro ao buscar Cardano:", err.message);
+        setError(prev => prev ? prev + " | Cardano" : "Erro ao atualizar Cardano (mantendo dados)");
+      })
+      .finally(() => setLoading(false));
 
     // Bitcoin via Binance
     fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
@@ -36,13 +36,14 @@ function App() {
       })
       .then(data => setBtcData(data))
       .catch(err => {
-        console.error('Erro ao buscar BTC:', err.message);
+        console.error("Erro ao buscar BTC:", err.message);
+        setError(prev => prev ? prev + " | BTC" : "Erro ao atualizar BTC (mantendo dados)");
       });
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 300000);
+    const interval = setInterval(fetchData, 300000); // 5 minutos
     return () => clearInterval(interval);
   }, []);
 
@@ -54,22 +55,27 @@ function App() {
   }, []);
 
   if (loading && !cardanoData) return <p className="loading">Carregando dados da Cardano...</p>;
-  if (error) return <p className="error">Erro: {error}</p>;
 
   return (
     <div className="container">
       <h1 className="title">Cardano Tracker</h1>
 
-      <p><strong>Nome:</strong> {cardanoData.name}</p>
-      <p><strong>Preço:</strong> ${cardanoData.price.toFixed(4)}</p>
-      <p>
-        <strong>Variação 24h:</strong>{' '}
-        <span className={cardanoData.change24h >= 0 ? 'positive' : 'negative'}>
-          {cardanoData.change24h >= 0 ? '+' : ''}
-          {cardanoData.change24h.toFixed(2)}%
-        </span>
-      </p>
-      <p><strong>Market Cap:</strong> ${(cardanoData.marketCap / 1e9).toFixed(2)} B</p>
+      {error && <p className="error">⚠️ {error}</p>}
+
+      {cardanoData && (
+        <>
+          <p><strong>Nome:</strong> {cardanoData.name}</p>
+          <p><strong>Preço:</strong> ${cardanoData.price.toFixed(4)}</p>
+          <p>
+            <strong>Variação 24h:</strong>{' '}
+            <span className={cardanoData.change24h >= 0 ? 'positive' : 'negative'}>
+              {cardanoData.change24h >= 0 ? '+' : ''}
+              {cardanoData.change24h.toFixed(2)}%
+            </span>
+          </p>
+          <p><strong>Market Cap:</strong> ${(cardanoData.marketCap / 1e9).toFixed(2)} B</p>
+        </>
+      )}
 
       {btcData && (
         <div className="btc-container">
