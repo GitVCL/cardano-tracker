@@ -3,7 +3,7 @@ import './App.css';
 
 function App() {
   const [cardanoData, setCardanoData] = useState(null);
-  const [btcPrice, setBtcPrice] = useState(null);
+  const [btcData, setBtcData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [nextUpdate, setNextUpdate] = useState(300); // 5 minutos
@@ -28,21 +28,21 @@ function App() {
         setLoading(false);
       });
 
-    // Bitcoin
-    fetch("https://cardano-back.onrender.com/api/binance/BTCUSDT")
+    // Bitcoin via Binance
+    fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
       .then(response => {
-        if (!response.ok) throw new Error('Erro na resposta da API da Binance');
+        if (!response.ok) throw new Error('Erro na API da Binance');
         return response.json();
       })
-      .then(data => setBtcPrice(data.price))
+      .then(data => setBtcData(data))
       .catch(err => {
-        console.error('Erro ao buscar preço do Bitcoin:', err.message);
+        console.error('Erro ao buscar BTC:', err.message);
       });
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 300000); // 5 min
+    const interval = setInterval(fetchData, 300000);
     return () => clearInterval(interval);
   }, []);
 
@@ -71,10 +71,10 @@ function App() {
       </p>
       <p><strong>Market Cap:</strong> ${(cardanoData.marketCap / 1e9).toFixed(2)} B</p>
 
-      {btcPrice && (
+      {btcData && (
         <div className="btc-container">
           <h2 className="btc-title">Bitcoin (BTC/USDT)</h2>
-          <p><strong>Preço:</strong> ${parseFloat(btcPrice).toLocaleString('en-US', {
+          <p><strong>Preço:</strong> ${parseFloat(btcData.price).toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
           })}</p>
