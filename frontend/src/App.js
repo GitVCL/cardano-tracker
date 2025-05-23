@@ -12,18 +12,25 @@ function App() {
     setLoading(true);
     setError(null);
 
+    // === Cardano ===
     fetch("https://cardano-back.onrender.com/api/cardano")
       .then(res => res.ok ? res.json() : Promise.reject("Erro API Cardano"))
       .then(data => {
         setCardanoData(data);
+        localStorage.setItem("cardanoData", JSON.stringify(data)); // salva no localStorage
         setNextUpdate(300);
       })
       .catch(err => {
         console.error("Cardano:", err);
+        const cachedData = localStorage.getItem("cardanoData");
+        if (cachedData) {
+          setCardanoData(JSON.parse(cachedData)); // usa os dados salvos
+        }
         setError(prev => prev ? prev + " | Cardano" : "Erro ao atualizar Cardano (mantendo dados)");
       })
       .finally(() => setLoading(false));
 
+    // === BTC ===
     fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
       .then(res => res.ok ? res.json() : Promise.reject("Erro API Binance"))
       .then(data => setBtcData(data))
@@ -34,8 +41,14 @@ function App() {
   };
 
   useEffect(() => {
+    // Carrega o cache ao iniciar
+    const cachedCardano = localStorage.getItem("cardanoData");
+    if (cachedCardano) {
+      setCardanoData(JSON.parse(cachedCardano));
+    }
+
     fetchData();
-    const interval = setInterval(fetchData, 300000);
+    const interval = setInterval(fetchData, 300000); // 5 min
     return () => clearInterval(interval);
   }, []);
 
