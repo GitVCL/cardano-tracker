@@ -14,29 +14,29 @@ function App() {
 
     // Cardano
     fetch("https://cardano-back.onrender.com/api/cardano")
-      .then(response => {
-        if (!response.ok) throw new Error('Erro na resposta da API da Cardano');
-        return response.json();
+      .then(res => {
+        if (!res.ok) throw new Error("Erro na resposta da API da Cardano");
+        return res.json();
       })
       .then(data => {
         setCardanoData(data);
         setNextUpdate(300);
       })
       .catch(err => {
-        console.error("Erro ao buscar Cardano:", err.message);
+        console.error("Cardano:", err.message);
         setError(prev => prev ? prev + " | Cardano" : "Erro ao atualizar Cardano (mantendo dados)");
       })
       .finally(() => setLoading(false));
 
-    // Bitcoin via Binance
+    // Bitcoin
     fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
-      .then(response => {
-        if (!response.ok) throw new Error('Erro na API da Binance');
-        return response.json();
+      .then(res => {
+        if (!res.ok) throw new Error("Erro na API da Binance");
+        return res.json();
       })
       .then(data => setBtcData(data))
       .catch(err => {
-        console.error("Erro ao buscar BTC:", err.message);
+        console.error("BTC:", err.message);
         setError(prev => prev ? prev + " | BTC" : "Erro ao atualizar BTC (mantendo dados)");
       });
   };
@@ -54,16 +54,15 @@ function App() {
     return () => clearInterval(countdown);
   }, []);
 
-  if (loading && !cardanoData) return <p className="loading">Carregando dados da Cardano...</p>;
-
   return (
     <div className="container">
-      <h1 className="title">Cardano Tracker</h1>
+      <h1 className="title">Crypto Tracker</h1>
 
       {error && <p className="error">⚠️ {error}</p>}
 
       {cardanoData && (
-        <>
+        <div className="card glass">
+          <h2 className="card-title">Cardano (ADA)</h2>
           <p><strong>Nome:</strong> {cardanoData.name}</p>
           <p><strong>Preço:</strong> ${cardanoData.price.toFixed(4)}</p>
           <p>
@@ -74,12 +73,12 @@ function App() {
             </span>
           </p>
           <p><strong>Market Cap:</strong> ${(cardanoData.marketCap / 1e9).toFixed(2)} B</p>
-        </>
+        </div>
       )}
 
       {btcData && (
-        <div className="btc-container">
-          <h2 className="btc-title">Bitcoin (BTC/USDT)</h2>
+        <div className="card glass">
+          <h2 className="card-title">Bitcoin (BTC/USDT)</h2>
           <p><strong>Preço:</strong> ${parseFloat(btcData.price).toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
@@ -87,7 +86,7 @@ function App() {
         </div>
       )}
 
-      <p className="next-update">Próxima atualização em: {nextUpdate}s</p>
+      <p className="next-update">🔄 Próxima atualização em: {nextUpdate}s</p>
     </div>
   );
 }
