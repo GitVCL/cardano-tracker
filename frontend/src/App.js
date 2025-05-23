@@ -3,6 +3,7 @@ import './App.css';
 
 function App() {
   const [cardanoData, setCardanoData] = useState(null);
+  const [btcPrice, setBtcPrice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [nextUpdate, setNextUpdate] = useState(300); // 5 minutos
@@ -11,25 +12,37 @@ function App() {
     setLoading(true);
     setError(null);
 
+    // Cardano
     fetch("https://cardano-back.onrender.com/api/cardano")
       .then(response => {
-        if (!response.ok) throw new Error('Erro na resposta da API');
+        if (!response.ok) throw new Error('Erro na resposta da API da Cardano');
         return response.json();
       })
       .then(data => {
         setCardanoData(data);
         setLoading(false);
-        setNextUpdate(300); // reinicia o contador
+        setNextUpdate(300);
       })
       .catch(err => {
         setError(err.message);
         setLoading(false);
       });
+
+    // Bitcoin
+    fetch("https://cardano-back.onrender.com/api/binance/BTCUSDT")
+      .then(response => {
+        if (!response.ok) throw new Error('Erro na resposta da API da Binance');
+        return response.json();
+      })
+      .then(data => setBtcPrice(data.price))
+      .catch(err => {
+        console.error('Erro ao buscar preço do Bitcoin:', err.message);
+      });
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 300000); // atualiza a cada 5 minutos
+    const interval = setInterval(fetchData, 300000); // 5 min
     return () => clearInterval(interval);
   }, []);
 
@@ -57,6 +70,16 @@ function App() {
         </span>
       </p>
       <p><strong>Market Cap:</strong> ${(cardanoData.marketCap / 1e9).toFixed(2)} B</p>
+
+      {btcPrice && (
+        <div className="btc-container">
+          <h2 className="btc-title">Bitcoin (BTC/USDT)</h2>
+          <p><strong>Preço:</strong> ${parseFloat(btcPrice).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}</p>
+        </div>
+      )}
 
       <p className="next-update">Próxima atualização em: {nextUpdate}s</p>
     </div>
