@@ -41,7 +41,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>Binance Tracker</h1>
+        <h1>Tracker</h1>
         <span className="next-update">Atualiza em: {nextUpdate}s</span>
       </header>
 
