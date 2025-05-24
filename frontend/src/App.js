@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
+  const [cryptoData, setCryptoData] = useState([]);
   const [cardanoData, setCardanoData] = useState(null);
-  const [btcData, setBtcData] = useState(null);
-  const [ethData, setEthData] = useState(null);
-  const [solData, setSolData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [nextUpdate, setNextUpdate] = useState(300);
@@ -14,7 +12,7 @@ function App() {
     setLoading(true);
     setError(null);
 
-    // Cardano
+    // Cardano (Coingecko)
     fetch("https://cardano-back.onrender.com/api/cardano")
       .then(res => res.ok ? res.json() : Promise.reject("Erro API Cardano"))
       .then(data => {
@@ -27,37 +25,19 @@ function App() {
       })
       .finally(() => setLoading(false));
 
-    // Bitcoin
-    fetch("https://cardano-back.onrender.com/api/binance/BTCUSDT")
-      .then(res => res.ok ? res.json() : Promise.reject("Erro API BTC"))
-      .then(data => setBtcData(data))
+    // Outras criptos (Binance)
+    fetch("https://cardano-back.onrender.com/api/cryptos")
+      .then(res => res.ok ? res.json() : Promise.reject("Erro API Binance"))
+      .then(data => setCryptoData(data))
       .catch(err => {
-        console.error("BTC:", err);
-        setError(prev => prev ? prev + " | BTC" : "Erro ao atualizar BTC (mantendo dados)");
-      });
-
-    // Ethereum
-    fetch("https://cardano-back.onrender.com/api/binance/ETHUSDT")
-      .then(res => res.ok ? res.json() : Promise.reject("Erro API ETH"))
-      .then(data => setEthData(data))
-      .catch(err => {
-        console.error("ETH:", err);
-        setError(prev => prev ? prev + " | ETH" : "Erro ao atualizar ETH");
-      });
-
-    // Solana
-    fetch("https://cardano-back.onrender.com/api/binance/SOLUSDT")
-      .then(res => res.ok ? res.json() : Promise.reject("Erro API SOL"))
-      .then(data => setSolData(data))
-      .catch(err => {
-        console.error("SOL:", err);
-        setError(prev => prev ? prev + " | SOL" : "Erro ao atualizar SOL");
+        console.error("Criptos:", err);
+        setError(prev => prev ? prev + " | Criptos" : "Erro ao atualizar criptomoedas (mantendo dados)");
       });
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 300000); // 5 min
+    const interval = setInterval(fetchData, 300000);
     return () => clearInterval(interval);
   }, []);
 
@@ -67,6 +47,28 @@ function App() {
     }, 1000);
     return () => clearInterval(countdown);
   }, []);
+
+  const getLogo = (symbol) => {
+    const logos = {
+      BTC: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+      ETH: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+      BNB: "https://cryptologos.cc/logos/bnb-bnb-logo.png",
+      SOL: "https://cryptologos.cc/logos/solana-sol-logo.png",
+      XRP: "https://cryptologos.cc/logos/xrp-xrp-logo.png",
+      ADA: "https://cryptologos.cc/logos/cardano-ada-logo.png",
+      DOGE: "https://cryptologos.cc/logos/dogecoin-doge-logo.png",
+      AVAX: "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+      DOT: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png",
+      SHIB: "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+      MATIC: "https://cryptologos.cc/logos/polygon-matic-logo.png",
+      LINK: "https://cryptologos.cc/logos/chainlink-link-logo.png",
+      TRX: "https://cryptologos.cc/logos/tron-trx-logo.png",
+      LTC: "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+      BCH: "https://cryptologos.cc/logos/bitcoin-cash-bch-logo.png"
+    };
+    const short = symbol.replace('USDT', '');
+    return logos[short] || "";
+  };
 
   return (
     <div className="app">
@@ -102,39 +104,23 @@ function App() {
           </div>
         )}
 
-        {btcData && (
-          <div className="table-row">
+        {cryptoData.map(coin => (
+          <div key={coin.symbol} className="table-row">
             <div className="coin-info">
-              <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" className="coin-logo" />
+              <img src={getLogo(coin.symbol)} alt={coin.symbol} className="coin-logo" />
               <div>
-                <strong>Bitcoin</strong>
-                <span className="ticker">BTC</span>
+                <strong>{coin.name}</strong>
+                <span className="ticker">{coin.symbol.replace('USDT', '')}</span>
               </div>
             </div>
-            <span>${btcData.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+            <span>${coin.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
             <span>-</span>
             <span>-</span>
           </div>
-        )}
+        ))}
+      </div>
+    </div>
+  );
+}
 
-        {ethData && (
-          <div className="table-row">
-            <div className="coin-info">
-              <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH" className="coin-logo" />
-              <div>
-                <strong>Ethereum</strong>
-                <span className="ticker">ETH</span>
-              </div>
-            </div>
-            <span>${ethData.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-            <span>-</span>
-            <span>-</span>
-          </div>
-        )}
-
-        {solData && (
-          <div className="table-row">
-            <div className="coin-info">
-              <img src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL" className="coin-logo" />
-              <div>
-                <strong>Solana</str
+export default App;
