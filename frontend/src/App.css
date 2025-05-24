@@ -131,4 +131,22 @@ body {
   .next-update {
     font-size: 12px;
   }
+  .coin-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.coin-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.coin-logo:hover {
+  transform: scale(1.1);
+}
+
 }

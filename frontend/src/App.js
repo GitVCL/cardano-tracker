@@ -7,6 +7,29 @@ function App() {
   const [nextUpdate, setNextUpdate] = useState(300);
   const [error, setError] = useState(null);
 
+
+  const getLogo = (symbol) => {
+  const logos = {
+    BTC: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+    ETH: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+    BNB: "https://cryptologos.cc/logos/bnb-bnb-logo.png",
+    SOL: "https://cryptologos.cc/logos/solana-sol-logo.png",
+    XRP: "https://cryptologos.cc/logos/xrp-xrp-logo.png",
+    ADA: "https://cryptologos.cc/logos/cardano-ada-logo.png",
+    DOGE: "https://cryptologos.cc/logos/dogecoin-doge-logo.png",
+    AVAX: "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    DOT: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png",
+    SHIB: "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    MATIC: "https://cryptologos.cc/logos/polygon-matic-logo.png",
+    LINK: "https://cryptologos.cc/logos/chainlink-link-logo.png",
+    TRX: "https://cryptologos.cc/logos/tron-trx-logo.png",
+    LTC: "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    BCH: "https://cryptologos.cc/logos/bitcoin-cash-bch-logo.png"
+  };
+  const prefix = symbol.replace('USDT', '');
+  return logos[prefix] || '';
+};
+
   const fetchData = () => {
     setLoading(true);
     setError(null);
